@@ -55,9 +55,10 @@ module Vagrant
             forward = env[:vm].config.vm.forwarded_ports.select do |x|
               x[:guestport] == ssh.guest_port
             end.first[:hostport]
+            ssh_port = if env[:vm].ssh then env[:vm].ssh.info[:port] else forward end
             file = Tempfile.new('inventory')
             file.write("[#{config.hosts}]\n")
-            file.write("#{ssh.host}:#{forward}")
+            file.write("#{ssh.host}:#{ssh_port}")
             file.fsync
             file.close
             yield file.path
